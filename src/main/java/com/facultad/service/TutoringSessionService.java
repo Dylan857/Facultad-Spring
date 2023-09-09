@@ -2,14 +2,15 @@ package com.facultad.service;
 
 import java.util.List;
 
+import com.facultad.dto.TutoringSessionDto;
+import com.facultad.dto.view.TutoringSessionView;
 import com.facultad.model.TutoringSession;
 
 public interface TutoringSessionService {
 
-	public boolean createTutorial(String docenteId, String date, String startTime, String endTime, 
-	List<String> students, String majorId, String topicCovered);
+	public boolean createTutorial(TutoringSessionDto tutoringSessionDto);
 	
-	public List<TutoringSession> getTutoringSessions();
+	public List<TutoringSessionView> getTutoringSessions();
 	
 	public List<TutoringSession> findTutoringSessionByTeacher(String identificationNumber);
 	
@@ -19,8 +20,7 @@ public interface TutoringSessionService {
 	
 	public List<TutoringSession> findTutoringSessionById(String id);
 	
-	public boolean updateTutorial(String id, String docenteId, String date, String startTime, String endTime, 
-			List<String> students, String majorId, String topicCovered);
+	public boolean updateTutorial(String id, TutoringSessionDto tutoringSessionDto);
 	
 	public boolean deleteTutorial(String id);
 }

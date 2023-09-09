@@ -1,6 +1,7 @@
 package com.facultad.model;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +40,7 @@ public class TutoringSession {
 	private User teacherId;
 	
 	@Column(nullable = false)
-	private LocalDateTime date;
+	private LocalDate date;
 	
 	@Column(nullable = false)
 	private Time startTime;
@@ -63,4 +64,21 @@ public class TutoringSession {
     @JoinTable(name = "students_tutoring", joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"), 
     inverseJoinColumns = @JoinColumn(name = "tutoring_id", referencedColumnName = "id"))
     private Set<User> students = new HashSet<>();
+    
+    @Column(name = "topic_covered", length = 30, nullable = false)
+    private String topicCovered;
+
+	public TutoringSession(User teacherId, LocalDate date, Time startTime, Time endTime, Major majorId, Set<User> students, String topicCovered) {
+		super();
+		this.teacherId = teacherId;
+		this.date = date;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.majorId = majorId;
+		this.dateReg = LocalDateTime.now();
+		this.active = 1;
+		this.students = students;
+		this.topicCovered = topicCovered;
+	}
+    
 }

@@ -12,6 +12,8 @@ import com.facultad.dto.UserDto;
 import com.facultad.service.UserService;
 import com.facultad.util.Response;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -20,7 +22,7 @@ public class AuthController {
 	private UserService userService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
+	public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
 		

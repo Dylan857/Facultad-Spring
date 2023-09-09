@@ -2,6 +2,7 @@ package com.facultad.service;
 
 import java.util.List;
 
+import com.facultad.dto.RequestDto;
 import com.facultad.model.Request;
 
 public interface RequestService {
@@ -10,5 +11,5 @@ public interface RequestService {
 	
 	public List<Request> getRequestsByTeacher(String teacherId);
 	
-	public boolean makeARequest(String estudianteId, String docenteId, String descripcionSolicitud);
+	public boolean makeARequest(RequestDto requestDto);
 }

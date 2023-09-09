@@ -3,6 +3,9 @@ package com.facultad.service;
 import java.util.List;
 
 import com.facultad.dto.UserDto;
+import com.facultad.dto.view.AdminDto;
+import com.facultad.dto.view.StudentDto;
+import com.facultad.dto.view.TeacherDto;
 import com.facultad.model.User;
 
 public interface UserService {
@@ -13,9 +16,10 @@ public interface UserService {
 	
 	public List<User> getUsers();
 	
-	public List<User> getUsersStudents();
+	public List<StudentDto> getUsersStudents();
 	
-	public List<User> getUsersTeachers();
+	public List<TeacherDto> getUsersTeachers();
 	
-	public List<User> getUsersAdmin();
+	public List<AdminDto> getUsersAdmin();
+	
 }

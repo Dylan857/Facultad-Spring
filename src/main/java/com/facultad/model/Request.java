@@ -47,4 +47,13 @@ public class Request {
     @Column(columnDefinition = "INTEGER DEFAULT 1", nullable = false)
     @JsonIgnore
     private Integer active;
+
+	public Request(User studentId, User teacherId, String descriptionRequest) {
+		this.studentId = studentId;
+		this.teacherId = teacherId;
+		this.descriptionRequest = descriptionRequest;
+		this.dateReg = LocalDateTime.now();
+		this.active = 1;
+	}
+    
 }

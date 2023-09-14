@@ -18,6 +18,8 @@ import com.facultad.dto.TutoringSessionDto;
 import com.facultad.dto.view.TutoringSessionView;
 import com.facultad.service.TutoringSessionService;
 import com.facultad.util.Response;
+import com.facultad.util.annotations.AdminToken;
+import com.facultad.util.annotations.TeacherToken;
 
 import jakarta.validation.Valid;
 
@@ -29,6 +31,7 @@ public class TutoringSessionController {
 	private TutoringSessionService tutoringSessionService;
 
 	@GetMapping("/get_tutorings")
+	@AdminToken
 	public ResponseEntity<Object> getTutoringsSessions() {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -49,6 +52,7 @@ public class TutoringSessionController {
 	}
 	
 	@PostMapping("/create_tutoring")
+	@TeacherToken
 	public ResponseEntity<Object> createtutoringSession(@Valid @RequestBody TutoringSessionDto tutoringSessionDto) {
 
 		ResponseEntity<Object> response;
@@ -69,6 +73,7 @@ public class TutoringSessionController {
 	}
 	
 	@PutMapping("/update_tutorial/{id}")
+	@TeacherToken
 	public ResponseEntity<Object> createtutoringSession(@PathVariable String id, @Valid @RequestBody TutoringSessionDto tutoringSessionDto) {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -87,6 +92,7 @@ public class TutoringSessionController {
 	}
 
 	@DeleteMapping("/delete_tutorial/{id}")
+	@TeacherToken
 	public ResponseEntity<Object> deleteTutorial(@PathVariable String id) {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();

@@ -16,6 +16,9 @@ import com.facultad.dto.RequestDto;
 import com.facultad.model.Request;
 import com.facultad.service.RequestService;
 import com.facultad.util.Response;
+import com.facultad.util.annotations.AdminToken;
+import com.facultad.util.annotations.StudentToken;
+import com.facultad.util.annotations.TeacherToken;
 
 @RestController
 @RequestMapping("/request")
@@ -25,6 +28,7 @@ public class RequestController {
 	private RequestService requestService;
 	
 	@GetMapping("/get_requests")
+	@AdminToken
 	public ResponseEntity<Object> getRequests() {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -45,6 +49,7 @@ public class RequestController {
 	}
 	
 	@GetMapping("/get_requests_by_teacher/{id}")
+	@TeacherToken
 	public ResponseEntity<Object> getRequestsByTeacher(@PathVariable String id) {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -66,6 +71,7 @@ public class RequestController {
 	
 
 	@PostMapping("/make_a_request")
+	@StudentToken
 	public ResponseEntity<Object> makeARequest(@RequestBody RequestDto requestDto) {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();

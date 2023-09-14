@@ -1,15 +1,25 @@
 package com.facultad.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.facultad.dto.LoginUser;
 import com.facultad.dto.UserDto;
 import com.facultad.dto.view.AdminDto;
 import com.facultad.dto.view.StudentDto;
@@ -22,9 +32,13 @@ import com.facultad.repository.CourseRepo;
 import com.facultad.repository.MajorRepo;
 import com.facultad.repository.RoleRepo;
 import com.facultad.repository.UserRepo;
+import com.facultad.security.jwt.JwtService;
 import com.facultad.service.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -38,6 +52,15 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private MajorRepo majorRepo;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JwtService jwtService;
 	
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_STUDENT = "ROLE_STUDENT";
@@ -87,8 +110,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean login(String email, String password) {
-		return false;
+	public String login(LoginUser loginUser) {
+		
+		User user = userRepo.findByEmail(loginUser.getUsername()).orElse(null);
+		
+		if (user == null || user.getActive() != 1) {
+			return null;
+		}
+		
+		Authentication authentication = authenticationManager.authenticate
+				(new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
+		
+		if (authentication.isAuthenticated()) {
+			List<String> roles = this.getRolesByUser(user.getRoles());
+			return jwtService.getToken(user.getEmail(), roles);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -185,10 +223,11 @@ public class UserServiceImpl implements UserService {
 
 	private User newUser(UserDto userDto, int codigoVerificacion) {
 		return new User(userDto.getName(), userDto.getEmail(), userDto.getPhone(), userDto.getIdType(),
-				userDto.getIdentificationNumber(), userDto.getPassword(), codigoVerificacion);
+				userDto.getIdentificationNumber(), passwordEncoder.encode(userDto.getPassword()), codigoVerificacion);
 	}
 
-	private List<String> getRolesByUser(Set<Role> rolesModel) {
+	@Override
+	public List<String> getRolesByUser(Set<Role> rolesModel) {
 		List<String> roles = new ArrayList<>();
 		for (Role role : rolesModel) {
 			String roleString = role.getRole();
@@ -215,5 +254,37 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public Map<String, Object> getUserInformation() {
+		Map<String, Object> userInformation = new HashMap<>();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+			Optional<User> userOptional = userRepo.findByEmail(userDetails.getUsername());
+			User foundUser = userOptional.orElse(null);
+			
+			if (foundUser != null) {
+				List<String> roles = this.getRolesByUser(foundUser.getRoles());
+				userInformation.put("name", foundUser.getName());
+				userInformation.put("email", foundUser.getEmail());
+				userInformation.put("phone", foundUser.getPhone());
+				userInformation.put("identificationNumber", foundUser.getIdentificationNumber());
+				userInformation.put("roles", roles);
+				if (roles.contains(ROLE_STUDENT)) {
+					userInformation.put("course", foundUser.getStudentCourse());
+				} else if (roles.contains(ROLE_TEACHER)) {
+					userInformation.put("course", foundUser.getTeacherCourse());
+					userInformation.put("major", foundUser.getTeacherMajor());
+				}
+				return userInformation;
+			} else {
+				return Collections.emptyMap();
+			}
+		} else {
+			return Collections.emptyMap();
+		}
 	}
 }

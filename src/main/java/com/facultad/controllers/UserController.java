@@ -1,6 +1,7 @@
 package com.facultad.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ import com.facultad.dto.view.TeacherDto;
 import com.facultad.model.User;
 import com.facultad.service.UserService;
 import com.facultad.util.Response;
+import com.facultad.util.ResponseOneData;
+import com.facultad.util.annotations.AdminToken;
+import com.facultad.util.annotations.TeacherToken;
 
 @RestController
 @RequestMapping("/user")
@@ -23,7 +27,28 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@GetMapping("/user_information")
+	public ResponseEntity<Object> getUserInformation() {
+		ResponseEntity<Object> response;
+		ResponseOneData responseOneData = new ResponseOneData();
+		
+		Map<String, Object> user = userService.getUserInformation();
+		if (!user.isEmpty()) {
+			responseOneData.setStatusCode(HttpStatus.OK.value());
+			responseOneData.setMessage("OK");
+			responseOneData.setData(user);
+			response = new ResponseEntity<>(responseOneData, HttpStatus.OK);
+			return response;
+		} else {
+			responseOneData.setStatusCode(HttpStatus.NOT_FOUND.value());
+			responseOneData.setMessage("No se ha iniciado sesion");
+			response = new ResponseEntity<>(responseOneData, HttpStatus.NOT_FOUND);
+			return response;
+		}
+	}
+	
 	@GetMapping("/get_users")
+	@AdminToken
 	public ResponseEntity<Object> getUsers() {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -44,6 +69,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/get_users_students")
+	@TeacherToken
 	public ResponseEntity<Object> getUsersStudents() {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
@@ -84,6 +110,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/get_users_admins")
+	@AdminToken
 	public ResponseEntity<Object> getUsersAdmin() {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();

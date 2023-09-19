@@ -22,4 +22,5 @@ public class TutoringSessionView {
 	private Major majorId;
 	private List<StudentDto> students = new ArrayList<>();
 	private String topicCovered;
+	private String status;
 }

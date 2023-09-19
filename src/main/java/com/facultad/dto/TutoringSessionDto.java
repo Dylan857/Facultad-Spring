@@ -29,4 +29,6 @@ public class TutoringSessionDto {
 	
 	@NotBlank
 	private String topicCovered;
+	
+	private String statusTutoringSessionId;
 }

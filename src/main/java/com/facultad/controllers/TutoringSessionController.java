@@ -19,6 +19,7 @@ import com.facultad.dto.view.TutoringSessionView;
 import com.facultad.service.TutoringSessionService;
 import com.facultad.util.Response;
 import com.facultad.util.annotations.AdminToken;
+import com.facultad.util.annotations.StudentToken;
 import com.facultad.util.annotations.TeacherToken;
 
 import jakarta.validation.Valid;
@@ -37,6 +38,69 @@ public class TutoringSessionController {
 		Response responseData = new Response();
 
 		List<TutoringSessionView> tutorings = tutoringSessionService.getTutoringSessions();
+		if (!tutorings.isEmpty()) {
+			responseData.setStatusCode(HttpStatus.OK.value());
+			responseData.setMessage("OK");
+			responseData.setData(tutorings);
+			response = new ResponseEntity<>(responseData, HttpStatus.OK);
+			return response;
+		} else {
+			responseData.setStatusCode(HttpStatus.NOT_FOUND.value());
+			responseData.setMessage("No hay datos a mostrar");
+			response = new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+			return response;
+		}
+	}
+	
+	@GetMapping("/get_tutorings/{identificationNumber}")
+	@StudentToken
+	public ResponseEntity<Object> getTutoringsSessionsByTeacher(@PathVariable String identificationNumber) {
+		ResponseEntity<Object> response;
+		Response responseData = new Response();
+
+		List<TutoringSessionView> tutorings = tutoringSessionService.findTutoringSessionByTeacher(identificationNumber);
+		if (!tutorings.isEmpty()) {
+			responseData.setStatusCode(HttpStatus.OK.value());
+			responseData.setMessage("OK");
+			responseData.setData(tutorings);
+			response = new ResponseEntity<>(responseData, HttpStatus.OK);
+			return response;
+		} else {
+			responseData.setStatusCode(HttpStatus.NOT_FOUND.value());
+			responseData.setMessage("No hay datos a mostrar");
+			response = new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+			return response;
+		}
+	}
+	
+	@GetMapping("/get_tutorings_major/{majorId}")
+	@StudentToken
+	public ResponseEntity<Object> getTutoringsSessionsByMajor(@PathVariable String majorId) {
+		ResponseEntity<Object> response;
+		Response responseData = new Response();
+
+		List<TutoringSessionView> tutorings = tutoringSessionService.findTutoringSessionByMajor(majorId);
+		if (!tutorings.isEmpty()) {
+			responseData.setStatusCode(HttpStatus.OK.value());
+			responseData.setMessage("OK");
+			responseData.setData(tutorings);
+			response = new ResponseEntity<>(responseData, HttpStatus.OK);
+			return response;
+		} else {
+			responseData.setStatusCode(HttpStatus.NOT_FOUND.value());
+			responseData.setMessage("No hay datos a mostrar");
+			response = new ResponseEntity<>(responseData, HttpStatus.NOT_FOUND);
+			return response;
+		}
+	}
+	
+	@GetMapping("/get_tutorings_date/{date}")
+	@StudentToken
+	public ResponseEntity<Object> getTutoringsSessionsByDate(@PathVariable String date) {
+		ResponseEntity<Object> response;
+		Response responseData = new Response();
+
+		List<TutoringSessionView> tutorings = tutoringSessionService.findTutoringSessionByDate(date);
 		if (!tutorings.isEmpty()) {
 			responseData.setStatusCode(HttpStatus.OK.value());
 			responseData.setMessage("OK");

@@ -34,41 +34,45 @@ public class TutoringSession {
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "teacher_id", nullable = false)
 	private User teacherId;
-	
+
 	@Column(nullable = false)
 	private LocalDate date;
-	
+
 	@Column(nullable = false)
 	private Time startTime;
-	
+
 	@Column(nullable = false)
 	private Time endTime;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "major_id", nullable = false)
 	private Major majorId;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "status_id", nullable = false)
+	private StatusTutoringSession statusTutoringSession;
+
 	@Column(name = "date_reg", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 	@JsonIgnore
 	private LocalDateTime dateReg;
-	
-    @Column(columnDefinition = "INTEGER DEFAULT 1", nullable = false)
-    @JsonIgnore
-    private Integer active;
-    
-    @ManyToMany
-    @JoinTable(name = "students_tutoring", joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"), 
-    inverseJoinColumns = @JoinColumn(name = "tutoring_id", referencedColumnName = "id"))
-    private Set<User> students = new HashSet<>();
-    
-    @Column(name = "topic_covered", length = 30, nullable = false)
-    private String topicCovered;
 
-	public TutoringSession(User teacherId, LocalDate date, Time startTime, Time endTime, Major majorId, Set<User> students, String topicCovered) {
+	@Column(columnDefinition = "INTEGER DEFAULT 1", nullable = false)
+	@JsonIgnore
+	private Integer active;
+
+	@ManyToMany
+	@JoinTable(name = "students_tutoring", joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "tutoring_id", referencedColumnName = "id"))
+	private Set<User> students = new HashSet<>();
+
+	@Column(name = "topic_covered", length = 30, nullable = false)
+	private String topicCovered;
+
+	public TutoringSession(User teacherId, LocalDate date, Time startTime, Time endTime, Major majorId,
+			Set<User> students, String topicCovered) {
 		super();
 		this.teacherId = teacherId;
 		this.date = date;
@@ -80,5 +84,5 @@ public class TutoringSession {
 		this.students = students;
 		this.topicCovered = topicCovered;
 	}
-    
+
 }

@@ -1,5 +1,6 @@
 package com.facultad.exception;
 
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,4 +43,12 @@ public class ControllerException {
 		return errors;
 	}
 	
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(DateTimeParseException.class)
+	public Map<String, Object> handleValidateDateTimeParse(DateTimeParseException ex) {
+		Map<String, Object> errors = new HashMap<>();
+		errors.put("statusCode", HttpStatus.BAD_REQUEST.value());
+		errors.put("message", "Invalid date");
+		return errors;
+	}
 }

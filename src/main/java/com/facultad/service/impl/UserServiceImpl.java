@@ -35,10 +35,8 @@ import com.facultad.repository.UserRepo;
 import com.facultad.security.jwt.JwtService;
 import com.facultad.service.UserService;
 
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class UserServiceImpl implements UserService {
 
 	@Autowired
@@ -285,6 +283,18 @@ public class UserServiceImpl implements UserService {
 			}
 		} else {
 			return Collections.emptyMap();
+		}
+	}
+
+	@Override
+	public boolean verifyCode(int code) {
+		User user = userRepo.findByVerificationCode(code);
+		if (user != null && user.getActive() == 0) {
+			user.setActive(1);
+			userRepo.save(user);
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

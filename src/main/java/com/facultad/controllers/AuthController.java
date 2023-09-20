@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.facultad.dto.LoginUser;
 import com.facultad.dto.UserDto;
+import com.facultad.dto.VerifyCodeDto;
 import com.facultad.security.jwt.AuthResponse;
 import com.facultad.service.UserService;
 import com.facultad.util.Response;
@@ -62,5 +63,25 @@ public class AuthController {
 			response = new ResponseEntity<>(authResponse, HttpStatus.UNAUTHORIZED);
 			return response;
 		}
+	}
+	
+	@PostMapping("/verify")
+	public ResponseEntity<Object> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCode) {
+		ResponseEntity<Object> response;
+		Response responseData = new Response();
+		
+		boolean verifiedCode = userService.verifyCode(verifyCode.getCode());
+		if (verifiedCode) {
+			responseData.setStatusCode(HttpStatus.OK.value());
+			responseData.setMessage("OK");
+			response = new ResponseEntity<>(responseData, HttpStatus.OK);
+			return response;
+		} else {
+			responseData.setStatusCode(HttpStatus.BAD_REQUEST.value());
+			responseData.setMessage("Invalid code or already active user");
+			response = new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
+			return response;
+		}
+		
 	}
 }

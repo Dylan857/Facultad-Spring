@@ -1,5 +1,6 @@
 package com.facultad.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,7 +31,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,9 +68,9 @@ public class User implements UserDetails {
     @JsonIgnore
     private Integer active;
     
-    @Column(length = 6, nullable = false)
+    @Column(length = 6, nullable = false, unique = true, name = "verification_code")
     @JsonIgnore
-    private Integer codigoVerificacion;
+    private Integer verificationCode;
     
     @ManyToMany
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), 
@@ -92,14 +93,14 @@ public class User implements UserDetails {
     private Set<Course> teacherCourse = new HashSet<>();
 
 	public User(String name, String email, String phone, String idType, String identificationNumber, String password,
-			Integer codigoVerificacion) {
+			Integer verificationCode) {
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
 		this.idType = idType;
 		this.identificationNumber = identificationNumber;
 		this.password = password;
-		this.codigoVerificacion = codigoVerificacion;
+		this.verificationCode = verificationCode;
 		this.active = 0;
 		this.dateReg = LocalDateTime.now();
 	}

@@ -1,5 +1,6 @@
 package com.facultad.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -22,7 +23,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Request {
+public class Request implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "uuid")

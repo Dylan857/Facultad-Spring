@@ -1,5 +1,6 @@
 package com.facultad.model;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +29,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TutoringSession {
+public class TutoringSession implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(generator = "uuid")

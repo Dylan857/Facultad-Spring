@@ -30,4 +30,6 @@ public interface UserService {
 	
 	public List<String> getRolesByUser(Set<Role> rolesModel);
 	
+	public boolean verifyCode(int code);
+	
 }

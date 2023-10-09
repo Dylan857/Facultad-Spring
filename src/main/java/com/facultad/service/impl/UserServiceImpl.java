@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.facultad.dto.LoginUser;
 import com.facultad.dto.UserDto;
+import com.facultad.dto.UserEmailDto;
 import com.facultad.dto.view.AdminDto;
 import com.facultad.dto.view.StudentDto;
 import com.facultad.dto.view.TeacherDto;
@@ -34,6 +35,8 @@ import com.facultad.repository.RoleRepo;
 import com.facultad.repository.UserRepo;
 import com.facultad.security.jwt.JwtService;
 import com.facultad.service.UserService;
+
+import jakarta.mail.MessagingException;
 
 
 @Service
@@ -58,6 +61,9 @@ public class UserServiceImpl implements UserService {
 	private AuthenticationManager authenticationManager;
 	
 	@Autowired
+	private MailService mailService;
+	
+	@Autowired
 	private JwtService jwtService;
 	
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -66,10 +72,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public boolean createUser(UserDto userDto) {
+	public boolean createUser(UserDto userDto) throws MessagingException {
 
-		int codigoVerificacion = this.generateCode();
-		User newUser = this.newUser(userDto, codigoVerificacion);
+		int codeVerification = this.generateCode();
+		User newUser = this.newUser(userDto, codeVerification);
 
 		if (userDto.getRole().contains(ROLE_STUDENT) && !validateCourse(userDto.getCourseId())) {
 	        return false;
@@ -103,6 +109,10 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userRepo.save(newUser);
+		List<String> recipients = new ArrayList<>();
+		recipients.add(newUser.getEmail());
+		UserEmailDto userEmailDto = new UserEmailDto(newUser.getName(), codeVerification);
+		mailService.sendEmail(recipients, "Codigo de verificacion", userEmailDto, "codeVerification");
 		return true;
 
 	}
@@ -287,11 +297,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean verifyCode(int code) {
+	public boolean verifyCode(int code) throws MessagingException {
 		User user = userRepo.findByVerificationCode(code);
 		if (user != null && user.getActive() == 0) {
 			user.setActive(1);
 			userRepo.save(user);
+			UserEmailDto userEmailDto = new UserEmailDto(user.getName());
+			List<String> recipients = new ArrayList<>();
+			recipients.add(user.getEmail());
+			mailService.sendEmail(recipients, "Registro exitoso", userEmailDto, "successfulRegistration");
 			return true;
 		} else {
 			return false;

@@ -5,9 +5,11 @@ import java.util.List;
 import com.facultad.dto.TutoringSessionDto;
 import com.facultad.dto.view.TutoringSessionView;
 
+import jakarta.mail.MessagingException;
+
 public interface TutoringSessionService {
 
-	public boolean createTutorial(TutoringSessionDto tutoringSessionDto);
+	public boolean createTutorial(TutoringSessionDto tutoringSessionDto) throws MessagingException;
 	
 	public List<TutoringSessionView> getTutoringSessions();
 	

@@ -22,6 +22,7 @@ import com.facultad.util.annotations.AdminToken;
 import com.facultad.util.annotations.StudentToken;
 import com.facultad.util.annotations.TeacherToken;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -117,7 +118,7 @@ public class TutoringSessionController {
 	
 	@PostMapping("/create_tutoring")
 	@TeacherToken
-	public ResponseEntity<Object> createtutoringSession(@Valid @RequestBody TutoringSessionDto tutoringSessionDto) {
+	public ResponseEntity<Object> createtutoringSession(@Valid @RequestBody TutoringSessionDto tutoringSessionDto) throws MessagingException {
 
 		ResponseEntity<Object> response;
 		Response responseData = new Response();

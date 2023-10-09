@@ -12,9 +12,11 @@ import com.facultad.dto.view.TeacherDto;
 import com.facultad.model.Role;
 import com.facultad.model.User;
 
+import jakarta.mail.MessagingException;
+
 public interface UserService {
 
-	public boolean createUser(UserDto userDto);
+	public boolean createUser(UserDto userDto) throws MessagingException;
 	
 	public String login(LoginUser loginUser);
 	
@@ -30,6 +32,6 @@ public interface UserService {
 	
 	public List<String> getRolesByUser(Set<Role> rolesModel);
 	
-	public boolean verifyCode(int code);
+	public boolean verifyCode(int code) throws MessagingException;
 	
 }

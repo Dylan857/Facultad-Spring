@@ -30,6 +30,8 @@ import com.facultad.repository.TutoringSessionRepo;
 import com.facultad.repository.UserRepo;
 import com.facultad.service.TutoringSessionService;
 
+import jakarta.mail.MessagingException;
+
 @Service
 public class TutoringSessionServiceImpl implements TutoringSessionService {
 	
@@ -45,8 +47,11 @@ public class TutoringSessionServiceImpl implements TutoringSessionService {
 	@Autowired
 	private StatusTutoringSessionRepo statusTutoringSessionRepo;
 	
+	@Autowired
+	private MailService mailService;
+	
 	@Override
-	public boolean createTutorial(TutoringSessionDto tutoringSessionDto) {
+	public boolean createTutorial(TutoringSessionDto tutoringSessionDto) throws MessagingException {
 		User teacher = userRepo.findByIdentificationNumber(tutoringSessionDto.getTeacherId());
 		Set<User> students = this.getStudents(tutoringSessionDto.getStudentsId());
 		Time startTime = this.getTime(tutoringSessionDto.getStartTime());
@@ -59,6 +64,10 @@ public class TutoringSessionServiceImpl implements TutoringSessionService {
 				startTime, endTime, major, students, tutoringSessionDto.getTopicCovered());
 		newTutoringSession.setStatusTutoringSession(statusTutoringSession);
 		tutoringSessionRepo.save(newTutoringSession);
+		
+		TutoringSessionView tutoringSessionView = this.tutoringSessionToDto(newTutoringSession);
+		List<String> recipients = this.getRecipients(tutoringSessionView.getStudents());
+		mailService.sendEmail(recipients, "Agendamiento de tutoria", tutoringSessionView, "schedulingTutoring");
 		return true;
 	}
 
@@ -265,5 +274,25 @@ public class TutoringSessionServiceImpl implements TutoringSessionService {
 			tutorings.add(tutoringView);
 		}
 		return tutorings;
+	}
+	
+	private TutoringSessionView tutoringSessionToDto(TutoringSession tutoringModel) {
+		TeacherDto teacher = this.getTeacher(tutoringModel.getTeacherId());
+		String formattedDate = this.formatDate(tutoringModel.getDate());
+		String formattedStartTime = this.formatTime(tutoringModel.getStartTime());
+		String formattedEndTime = this.formatTime(tutoringModel.getEndTime());
+		StatusTutoringSession statusTutoringSession = this.getStatusTutoring(tutoringModel.getStatusTutoringSession().getId());
+		List<StudentDto> students = this.getStudentsTutoring(tutoringModel.getStudents());
+		return new TutoringSessionView(tutoringModel.getId(),teacher, 
+				formattedDate, formattedStartTime, formattedEndTime, tutoringModel.getMajorId(), students,
+				tutoringModel.getTopicCovered(), statusTutoringSession.getStatus());
+	}
+	
+	private List<String> getRecipients(List<StudentDto> students) {
+		List<String> recipients = new ArrayList<>();
+		for (StudentDto studentDto : students) {
+			recipients.add(studentDto.getEmail());
+		}
+		return recipients;
 	}
 }

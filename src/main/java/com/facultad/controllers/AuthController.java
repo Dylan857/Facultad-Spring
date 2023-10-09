@@ -15,6 +15,7 @@ import com.facultad.security.jwt.AuthResponse;
 import com.facultad.service.UserService;
 import com.facultad.util.Response;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -24,9 +25,8 @@ public class AuthController {
 	@Autowired
 	private UserService userService;
 	
-	
 	@PostMapping("/register")
-	public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
+	public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) throws MessagingException {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
 		
@@ -66,7 +66,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/verify")
-	public ResponseEntity<Object> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCode) {
+	public ResponseEntity<Object> verifyCode(@Valid @RequestBody VerifyCodeDto verifyCode) throws MessagingException {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
 		

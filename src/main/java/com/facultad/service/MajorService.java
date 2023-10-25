@@ -6,5 +6,6 @@ import com.facultad.model.Major;
 
 public interface MajorService {
 
-	public List<Major> get_majors ();
+	public List<Major> getMajors ();
+	public boolean saveMajor(Major major);
 }

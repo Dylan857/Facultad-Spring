@@ -47,4 +47,10 @@ public class Major implements Serializable {
     @ManyToMany(mappedBy = "teacherMajor")
     @JsonIgnore
     private Set<User> teachers = new HashSet<>();
+
+	public Major(String name) {
+		this.name = name;
+		this.active = 1;
+		this.dateReg = LocalDateTime.now();
+	}
 }

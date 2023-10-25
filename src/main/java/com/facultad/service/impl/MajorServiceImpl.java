@@ -16,8 +16,14 @@ public class MajorServiceImpl implements MajorService {
 	private MajorRepo majorRepo;
 	
 	@Override
-	public List<Major> get_majors() {
+	public List<Major> getMajors() {
 		return majorRepo.findByActive(1);
+	}
+
+	@Override
+	public boolean saveMajor(Major major) {
+		majorRepo.save(major);
+		return true;
 	}
 
 }

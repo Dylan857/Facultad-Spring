@@ -26,7 +26,7 @@ public class MajorController {
 		ResponseEntity<Object> response;
 		Response responseData = new Response();
 		
-		List<Major> majors = majorService.get_majors();
+		List<Major> majors = majorService.getMajors();
 		if (!majors.isEmpty()) {
 			responseData.setStatusCode(HttpStatus.OK.value());
 			responseData.setMessage("OK");
